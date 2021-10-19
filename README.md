@@ -1,17 +1,13 @@
 # Tutorials on GEDI Science Data Products
 
-## Keywords: lidar, GEDI, AGBD, aboveground biomass
-
 **Author:** ORNL DAAC       
 **Date:** August 26, 2021       
 **Contact for the ORNL DAAC:** support-ornl.gov@earthdata.nasa.gov
 
+**Keywords:** lidar, GEDI, AGBD, aboveground biomass
+
 ## Overview      
 These tutorials demonstrate how to discover, access and use GEDI science data products archived at the ORNL DAAC. 
-
-## Source Data
-
-## Prerequisites
 
 ## GEDI L4A Jupyter Notebooks
 1. [Searching and Downloading GEDI L4A Dataset](1_gedi_l4a_search_download.ipynb)
