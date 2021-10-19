@@ -1,4 +1,22 @@
-# GEDI L4A Jupyter Notebooks
-1. [Searching and Downloading GEDI L4a Dataset](1_gedi_l4a_search_download.ipynb)
-2. [Subsetting GEDI L4a Footprints](2_gedi_l4a_subsets.ipynb)
+# Tutorials on GEDI Science Data Products
+
+## Keywords: lidar, GEDI, AGBD, aboveground biomass
+
+**Author:** ORNL DAAC       
+**Date:** August 26, 2021       
+**Contact for the ORNL DAAC:** support-ornl.gov@earthdata.nasa.gov
+
+## Overview      
+These tutorials demonstrate how to discover, access and use GEDI science data products archived at the ORNL DAAC. 
+
+## Source Data
+
+## Prerequisites
+
+## GEDI L4A Jupyter Notebooks
+1. [Searching and Downloading GEDI L4A Dataset](1_gedi_l4a_search_download.ipynb)
+2. [Subsetting GEDI L4A Footprints](2_gedi_l4a_subsets.ipynb)
 3. [Exploring GEDI L4A data structure](3_gedi_l4a_exploring_data.ipynb)
+
+## Related Tutorials
+More tutorials related to ORNL DAAC data and web services can be found at the [ORNL DAAC Learning](https://daac.ornl.gov/resources/learning/) page.
