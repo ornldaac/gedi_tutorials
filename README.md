@@ -2,7 +2,7 @@
 
 **Author:** ORNL DAAC       
 **Date:** August 26, 2021       
-**Contact for the ORNL DAAC:** support-ornl.gov@earthdata.nasa.gov
+**Contact for the ORNL DAAC:** uso@daac.ornl.gov
 
 **Keywords:** lidar, GEDI, AGBD, aboveground biomass
 
