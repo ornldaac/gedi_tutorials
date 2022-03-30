@@ -21,7 +21,7 @@ This script downloads GEDI L4A granules.
 ### example usage
 
 ```
-/gedi_l4a_search_download.py --date1 2019-12-15 --date2 2020-01-12 --doi 10.3334/ORNLDAAC/2056 --poly ../polygons/amapa.json --outdir ../full_orbits/
+./gedi_l4a_search_download.py --date1 2019-12-15 --date2 2020-01-12 --doi 10.3334/ORNLDAAC/2056 --poly ../polygons/amapa.json --outdir ../full_orbits/
 ```
 
 ## 2. gedi_l4a_subsets.py
