@@ -9,7 +9,7 @@ This script downloads GEDI L4A granules.
 ./gedi_l4a_search_download.py --doi <DOI> --date1 <start_date> --date2 <end_date> --poly <path_to_geojson_file> --outdir <path_to_directory>
 ```
 ### arguments
-| agrument  | description |
+| argument  | description |
 | ------------- | ------------- |
 | --help  |  show help message and exit  |
 | --doi | dataset DOI e.g., 10.3334/ORNLDAAC/2056 for GEDI L4A V2.1 |
@@ -33,7 +33,7 @@ This script subsets GEDI L4A footprints by geojson.
 ./gedi_l4a_subsets.py --poly <path_to_geojson_file> --indir <path_to_input_directory> --subdir <path_to_output_directory> [--csv] [--json]
 ```
 ### arguments
-| agrument  | description |
+| argument  | description |
 | ------------- | ------------- |
 | --help  |  show help message and exit  |
 | --poly | path to a GeoJSON file defining area of interest|
