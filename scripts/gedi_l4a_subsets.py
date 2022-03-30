@@ -39,13 +39,13 @@ def parse_args(args):
     parser.add_argument(
         "--csv",
         default=False,
-        action=argparse.BooleanOptionalAction,
+        action='store_true',
         help="setting this creates additional output CSV subset file"
     )
     parser.add_argument(
         "--json",
         default=False,
-        action=argparse.BooleanOptionalAction,
+        action='store_true',
         help="setting this creates additional output GeoJSON subset file"
     )
 

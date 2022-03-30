@@ -15,9 +15,9 @@ from urllib.parse import urlsplit
 # CMR API base url
 CMR_URL="https://cmr.earthdata.nasa.gov/search/"
 AUTH_HOST = "https://urs.earthdata.nasa.gov"
+EDL_AUTH = "https://wiki.earthdata.nasa.gov/display/EL/How+To+Access+Data+With+cURL+And+Wget"
 DT_FORMAT = "%Y-%m-%d"
 GRANULE_FORMAT = "h5"
-
 
 def parse_args(args):
     """Parses command line agruments."""
@@ -86,7 +86,7 @@ def check_datefmt(d: str):
     """Checks if date parameters are in correct format.
     
     Args:
-        d (str): date string in YYYY-mm-DD
+        d (str): date string in YYYY-MM-DD
     
     Returns:
         datetime object
@@ -94,7 +94,7 @@ def check_datefmt(d: str):
     try:
         return dt.datetime.strptime(d, DT_FORMAT)
     except ValueError:
-        msg = "not a valid date in YYYY-mm-dd format"
+        msg = "not a valid date in YYYY-MM-DD format"
         raise argparse.ArgumentTypeError(msg)
 
 def check_doi(d: str):
@@ -155,11 +155,14 @@ def download_files(local_file: str, session, **granule):
     else:
         print(f'Downloading {path.basename(local_file)} ...')
          # Large file download https://stackoverflow.com/questions/16694907/download-large-file-in-python-with-requests
-        with session.get(granule['url'], stream=True) as r:
-            r.raise_for_status()
-            with open(local_file, 'wb') as f:
-                for chunk in r.iter_content(chunk_size=8192): 
-                    f.write(chunk)
+        try:
+            with session.get(granule['url'], stream=True) as r:
+                r.raise_for_status()
+                with open(local_file, 'wb') as f:
+                    for chunk in r.iter_content(chunk_size=8192): 
+                        f.write(chunk)
+        except requests.exceptions.HTTPError as e:
+            raise Exception(f"{e.response}.\r\n Set up NASA Earthdata Login authentication at {EDL_AUTH}")
 
 
 def get_granules_names(doi: str, poly_epsg4326, temporal_str: str):
