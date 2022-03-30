@@ -14,7 +14,7 @@ This script downloads GEDI L4A granules. First, set up NASA Earthdata Login auth
 | --help  |  show help message and exit  |
 | --doi | dataset DOI e.g., 10.3334/ORNLDAAC/2056 for GEDI L4A V2.1 |
 | --date1 | start date in YYYY-MM-DD format |
-| --date2 | start date in YYYY-MM-DD format |
+| --date2 | end date in YYYY-MM-DD format |
 | --poly | path to a GeoJSON file defining area of interest|
 | --outdir | path to the directory for saving downloaded h5 files |
 
