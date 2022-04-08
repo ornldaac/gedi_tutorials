@@ -10,8 +10,8 @@
 These tutorials demonstrate how to discover, access and use GEDI science data products archived at the ORNL DAAC. 
 
 ## GEDI L4A Jupyter Notebooks
-1. [Searching and Downloading GEDI L4A Dataset](1_gedi_l4a_search_download.ipynb)
-2. [Subsetting GEDI L4A Footprints](2_gedi_l4a_subsets.ipynb)
+1. [Searching and Downloading GEDI L4A Dataset](1_gedi_l4a_search_download.ipynb) ([script](scripts))
+2. [Subsetting GEDI L4A Footprints](2_gedi_l4a_subsets.ipynb) ([script](scripts))
 3. [Exploring GEDI L4A data structure](3_gedi_l4a_exploring_data.ipynb)
 4. [Apply correction to AGBD estimates for selected L4A shots](correct_GEDI_L4A_V002_01.ipynb)
 
