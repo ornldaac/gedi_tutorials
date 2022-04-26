@@ -100,7 +100,7 @@ def create_csv_json(outdir: str, fmt_json: bool, fmt_csv: bool):
                 beam_df.insert(0, 'BEAM', np.repeat(str(v), len(beam_df.index)).tolist())
                 beam_df.insert(0, 'filename', np.repeat(path.basename(subfile), len(beam_df.index)).tolist() )
                 # Appending to the subset_df dataframe
-                subset_df = subset_df.append(beam_df)
+                subset_df = pd.concat([subset_df, beam_df])
         hf_in.close()
 
     if not subset_df.empty:
