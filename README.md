@@ -18,7 +18,7 @@ These tutorials demonstrate how to discover, access and use [GEDI science data p
 1. [Apply correction to AGBD estimates for selected L4A shots, Version 2](correct_GEDI_L4A_V002_01.ipynb)
 
 ## GEDI L4B Jupyter Notebooks
-1. [Access GEDI L4B Dataset with OGC Web Services](gedi_l4b_ogc.ipynb)
+1. [Access GEDI L4B Dataset with OGC Web Services](https://nbviewer.org/github/ornldaac/gedi_tutorials/blob/main/gedi_l4b_ogc.ipynb)
 
 ## Related Tutorials
 More tutorials related to ORNL DAAC data and web services can be found at the [ORNL DAAC Learning](https://daac.ornl.gov/resources/learning/) page.
