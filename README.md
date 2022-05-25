@@ -14,6 +14,7 @@ These tutorials demonstrate how to discover, access and use [GEDI science data p
 1. [Subsetting GEDI L4A footprints](2_gedi_l4a_subsets.ipynb) ([script](scripts#2-gedi_l4a_subsetspy))
 1. [Exploring GEDI L4A data structure](3_gedi_l4a_exploring_data.ipynb)
 1. [Accessing GEDI L4A dataset with NASA OPeNDAP in the Cloud](access_gedi_l4a_hyrax.ipynb) ([script](scripts#3-gedi_l4a_hyraxpy))
+1. [Accessing GEDI L4A dataset with NASA Harmony API](gedi_l4a_harmony.ipynb) 
 1. [Reproducing L4A AGBD estimates from GEDI L2A RH metrics](reconstruct_L4A_AGBD_L2A_metrics.ipynb)
 1. [Apply correction to AGBD estimates for selected L4A shots, Version 2](correct_GEDI_L4A_V002_01.ipynb)
 
