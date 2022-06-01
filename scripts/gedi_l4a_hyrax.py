@@ -11,6 +11,7 @@ import pandas as pd
 from os import path
 from shapely.ops import orient
 from urllib.parse import urlsplit
+from requests.adapters import HTTPAdapter, Retry
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -189,6 +190,11 @@ def main():
     dt_cmr = '%Y-%m-%dT%H:%M:%SZ'
     temporal = start_date.strftime(dt_cmr) + ',' + end_date.strftime(dt_cmr)
 
+    # setting up maximum retries to get around Hyrax 500 error
+    s = requests.Session()
+    retries = Retry(total=3, backoff_factor=0.1, status_forcelist=[ 500, 502, 503, 504 ])
+    s.mount('https://', HTTPAdapter(max_retries=retries))
+
     # appending science variables to lat, lon, elev, shot_number
     for v in variables:
         if v not in HEADERS:
@@ -206,7 +212,7 @@ def main():
             # retrieving lat, lon coordinates for the file
             
             hyrax_url = f"{g['url']}.dap.nc4?dap4.ce=/{beam}/lon_lowestmode;/{beam}/lat_lowestmode"
-            ds = nc.Dataset('hyrax', memory=requests.get(hyrax_url).content)
+            ds = nc.Dataset('hyrax', memory=s.get(hyrax_url).content)
             lat = ds[beam]['lat_lowestmode'][:]
             lon = ds[beam]['lon_lowestmode'][:]
             ds.close()
@@ -225,7 +231,7 @@ def main():
                     for v in HEADERS[2:]:
                         var_s = f"/{beam}/{v}[{i}:{j}]"
                         hyrax_url = f"{g['url']}.dap.nc4?dap4.ce={var_s}"
-                        ds = nc.Dataset('hyrax', memory=requests.get(hyrax_url).content)
+                        ds = nc.Dataset('hyrax', memory=s.get(hyrax_url).content)
                         gdf_sub.loc[i:j, (v)] = ds[beam][v][:]
                         ds.close()
 
