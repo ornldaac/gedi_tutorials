@@ -212,32 +212,36 @@ def main():
             # retrieving lat, lon coordinates for the file
             
             hyrax_url = f"{g['url']}.dap.nc4?dap4.ce=/{beam}/lon_lowestmode;/{beam}/lat_lowestmode"
-            ds = nc.Dataset('hyrax', memory=s.get(hyrax_url).content)
-            lat = ds[beam]['lat_lowestmode'][:]
-            lon = ds[beam]['lon_lowestmode'][:]
-            ds.close()
-            df = pd.DataFrame({'lat_lowestmode': lat, 'lon_lowestmode': lon}) # creating pandas dataframe  
+            r = s.get(hyrax_url)
+            if (r.status_code != 400):
+                ds = nc.Dataset('hyrax', memory=r.content)
+                lat = ds[beam]['lat_lowestmode'][:]
+                lon = ds[beam]['lon_lowestmode'][:]
+                ds.close()
+                df = pd.DataFrame({'lat_lowestmode': lat, 'lon_lowestmode': lon}) # creating pandas dataframe  
 
-            # subsetting by bounds of the area of interest
-            # converting to geopandas dataframe
-            gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.lon_lowestmode, df.lat_lowestmode)) 
-            gdf_sub = gdf[gdf['geometry'].within(poly.geometry[0])]   
-            if not gdf_sub.empty:
-                # retrieving variables of interest, agbd, agbd_t in this case.
-                # We are only retriving the shots within subset area.
-                for _, df_gr in gdf_sub.groupby((gdf_sub.index.to_series().diff() > 1).cumsum()):
-                    i = df_gr.index.min()
-                    j = df_gr.index.max()
-                    for v in HEADERS[2:]:
-                        var_s = f"/{beam}/{v}[{i}:{j}]"
-                        hyrax_url = f"{g['url']}.dap.nc4?dap4.ce={var_s}"
-                        ds = nc.Dataset('hyrax', memory=s.get(hyrax_url).content)
-                        gdf_sub.loc[i:j, (v)] = ds[beam][v][:]
-                        ds.close()
+                # subsetting by bounds of the area of interest
+                # converting to geopandas dataframe
+                gdf = gpd.GeoDataFrame(df, geometry=gpd.points_from_xy(df.lon_lowestmode, df.lat_lowestmode)) 
+                gdf_sub = gdf[gdf['geometry'].within(poly.geometry[0])]   
+                if not gdf_sub.empty:
+                    # retrieving variables of interest, agbd, agbd_t in this case.
+                    # We are only retriving the shots within subset area.
+                    for _, df_gr in gdf_sub.groupby((gdf_sub.index.to_series().diff() > 1).cumsum()):
+                        i = df_gr.index.min()
+                        j = df_gr.index.max()
+                        for v in HEADERS[2:]:
+                            var_s = f"/{beam}/{v}[{i}:{j}]"
+                            hyrax_url = f"{g['url']}.dap.nc4?dap4.ce={var_s}"
+                            r = s.get(hyrax_url)
+                            if (r.status_code != 400):
+                                ds = nc.Dataset('hyrax', memory=r.content)
+                                gdf_sub.loc[i:j, (v)] = ds[beam][v][:]
+                                ds.close()
 
-                # saving the output file
-                gdf_sub['shot_number'] = gdf_sub['shot_number'].astype(str)
-                gdf_sub.to_csv(outfile, mode='a', index=False, header=False, columns=HEADERS)
+                    # saving the output file
+                    gdf_sub['shot_number'] = gdf_sub['shot_number'].astype(str)
+                    gdf_sub.to_csv(outfile, mode='a', index=False, header=False, columns=HEADERS)
 
     if fmt_json:
         jsonf = f"{path.splitext(outfile)[0]}.json"
