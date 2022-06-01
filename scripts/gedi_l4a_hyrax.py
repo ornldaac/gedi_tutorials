@@ -25,7 +25,7 @@ def parse_args(args):
 
     parser = argparse.ArgumentParser(
         description="Access GEDI L4A using NASA OPeNDAP in the Cloud",
-        usage="gedi_l4a_subsets.py --doi <DOI> --date1 <start_date> --date2 <end_date> --poly <path_to_geojson_file> --indir <path_to_input_directory> --subdir <path_to_output_directory> [--csv] [--json]\n"
+        usage="gedi_l4a_hyrax.py --doi <DOI> --date1 <start_date> --date2 <end_date> --poly <path_to_geojson_file> --beams <gedi_beams> --variables <gedi_variables> --outfile <output_csv_file> [--json]\n"
     )
     parser.add_argument(
         "--doi",
