@@ -23,7 +23,7 @@ These tutorials demonstrate how to discover, access and use [GEDI science data p
 1. [Access GEDI L4B Dataset with OGC Web Services](https://nbviewer.org/github/ornldaac/gedi_tutorials/blob/main/gedi_l4b_ogc.ipynb)
 
 ## Related Resources
-- NASA Earthdata Webinar: [Explore NASA GEDI Aboveground Biomass Datasets, Services, and Tools at NASA's ORNL DAAC](https://www.youtube.com/watch?v=_b1B-GbwBcE)
+- NASA Earthdata Webinar: [Explore NASA GEDI Aboveground Biomass Datasets, Services, and Tools at NASA's ORNL DAAC](https://daac.ornl.gov/resources/tutorials/2022_earthdata_webinar/)
 - ESA Workshop: [Synergistic Use of SAR and Lidar Data for Terrestrial Ecology Research](https://daac.ornl.gov/resources/workshops/esa-2021-workshop/)
 
 More resources related to ORNL DAAC data and web services can be found at the [ORNL DAAC Learning](https://daac.ornl.gov/resources/learning/) page.
