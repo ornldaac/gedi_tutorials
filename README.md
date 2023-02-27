@@ -9,6 +9,13 @@
 ## Overview      
 These tutorials demonstrate how to discover, access and use [GEDI science data products](https://daac.ornl.gov/gedi) archived at the ORNL DAAC. 
 
+## Prerequisites
+Requirement are in [requirements.txt](requirements.txt). To install the necessary python libraries, you can copy the [requirements.txt](requirements.txt) from this repository and run:
+
+```bash
+pip install -r requirements.txt
+```
+
 ## GEDI L4A Jupyter Notebooks
 1. [Searching and downloading GEDI L4A dataset](1_gedi_l4a_search_download.ipynb) ([script](scripts#1-gedi_l4a_search_downloadpy))
 1. [Subsetting GEDI L4A footprints](2_gedi_l4a_subsets.ipynb) ([script](scripts#2-gedi_l4a_subsetspy))
