@@ -21,7 +21,7 @@ pip install -r requirements.txt
 1. [Search and download GEDI L4A dataset](1_gedi_l4a_search_download.ipynb): search and download GEDI L4A granules over an area of interest to a local machine
 1. [Subset GEDI L4A footprints](2_gedi_l4a_subsets.ipynb): subset downloaded GEDI L4A granules to an area of interest
 1. [Explore GEDI L4A data structure](3_gedi_l4a_exploring_data.ipynb): explore data structure, variables, and quality flags of the GEDI L4A dataset. 
-1. [Direct S3 Access GEDI L4A from the NASA EarthData Cloud](gedi_l4a_direct_s3_access.ipynb): retrieve the GEDI L4A dataset from NASA Earthdata Cloud using direct S3 access. [![Open in SageMaker Studio Lab](https://studiolab.sagemaker.aws/studiolab.svg)](https://studiolab.sagemaker.aws/import/github/ornldaac/gedi_tutorials/blob/main/gedi_l4a_direct_s3_access.ipynb)
+1. [Direct S3 Access GEDI L4A from the NASA EarthData Cloud](gedi_l4a_direct_s3_access.ipynb): retrieve the GEDI L4A dataset from NASA Earthdata Cloud using direct S3 access. 
 1. [Access GEDI L4A dataset with NASA OPeNDAP in the Cloud](access_gedi_l4a_hyrax.ipynb): access selected variables for the GEDI L4A dataset within an area of interest using OPeNDAP Hyrax 
 1. [Access GEDI L4A dataset with NASA Harmony API](gedi_l4a_harmony.ipynb): direct access and subset the GEDI L4A variables using NASA Harmony API 
 1. [Reproduce L4A AGBD estimates from GEDI L2A RH metrics](reconstruct_L4A_AGBD_L2A_metrics.ipynb): reconstruct L4A AGBD estimates using L2A relative height (RH) metrics
