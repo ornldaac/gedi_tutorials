@@ -1,0 +1,7 @@
+{
+"type": "FeatureCollection",
+"name": "reserva_ducke",
+"features": [
+{ "type": "Feature", "properties": { }, "geometry": { "type": "MultiPolygon", "coordinates": [ [ [ [ -59.97666, -2.922419 ], [ -59.892488, -2.909396 ], [ -59.879477, -2.993487 ], [ -59.963649, -3.00651 ], [ -59.97666, -2.922419 ] ] ] ] } }
+]
+}
