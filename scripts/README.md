@@ -2,7 +2,7 @@
 
 ## 1. gedi_l4a_search_download.py
 
-This script downloads GEDI L4A granules to a local directory based on GeoJSON polygon and start/end dates. First, set up NASA Earthdata Login authentication using a `.netrc` file. Please refer to the instructions here: https://wiki.earthdata.nasa.gov/display/EL/How+To+Access+Data+With+cURL+And+Wget. 
+This [script](gedi_l4a_search_download.py) downloads GEDI L4A granules to a local directory based on GeoJSON polygon and start/end dates. First, set up NASA Earthdata Login authentication using a `.netrc` file. Please refer to the instructions here: https://urs.earthdata.nasa.gov/documentation/for_users/data_access/curl_and_wget. 
 
 ### usage
 ```bash
@@ -26,7 +26,7 @@ This script downloads GEDI L4A granules to a local directory based on GeoJSON po
 
 ## 2. gedi_l4a_subsets.py
 
-This script subsets the downloaded GEDI L4A granules by a GeoJSON polygon file. The output files are in the H5 native format, with the option of converting to CSV or GeoJSON formats, and include the GEDI shots within the bounds of the polygon file. 
+This [script](gedi_l4a_subsets.py) subsets the downloaded GEDI L4A granules by a GeoJSON polygon file. The output files are in the H5 native format, with the option of converting to CSV or GeoJSON formats, and include the GEDI shots within the bounds of the polygon file. 
 
 ### usage
 ```bash
@@ -50,7 +50,7 @@ This script subsets the downloaded GEDI L4A granules by a GeoJSON polygon file. 
 
 
 ## 3. gedi_l4a_hyrax.py
-This script accesses the GEDI L4A dataset using [NASA's OPeNDAP Hyrax](https://opendap.earthdata.nasa.gov/). First, set up NASA Earthdata Login authentication using a `.netrc` file. Please refer to the instructions here: https://wiki.earthdata.nasa.gov/display/EL/How+To+Access+Data+With+cURL+And+Wget. 
+This [script](gedi_l4a_hyrax.py) accesses the GEDI L4A dataset using [NASA's OPeNDAP Hyrax](https://opendap.earthdata.nasa.gov/). First, set up NASA Earthdata Login authentication using a `.netrc` file. Please refer to the instructions here: https://urs.earthdata.nasa.gov/documentation/for_users/data_access/curl_and_wget. 
 
 ### usage
 ```bash

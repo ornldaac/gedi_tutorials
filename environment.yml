@@ -1,0 +1,8 @@
+name: cms
+channels:
+  - conda-forge
+dependencies:
+  - python>=3.5
+  - pip
+  - pip:
+    - -r requirements.txt

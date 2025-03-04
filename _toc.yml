@@ -1,0 +1,47 @@
+# Table of contents
+
+format: jb-book
+root: README
+parts:
+  - caption: Introduction
+    numbered: false
+    chapters:
+    - file: docs/datasets
+    - file: docs/services
+    - file: docs/prerequisites
+      sections:
+        - file: docs/prerequisites/earthdatalogin
+        - file: docs/prerequisites/pythonmodules
+        - file: docs/prerequisites/compute
+        - file: docs/prerequisites/git
+#
+  - caption: GEDI L4A Footprint AGBD
+    numbered: false
+    chapters:
+    - file: notebooks/gedi_l4a_search_download
+    - file: notebooks/gedi_l4a_subsets
+    - file: notebooks/gedi_l4a_exploring_data
+    - file: notebooks/gedi_l4a_direct_s3_access
+    - file: notebooks/gedi_l4a_harmony
+    - file: notebooks/gedi_l4a_access_hyrax
+    - file: notebooks/gedi_l4a_correct_V002_01
+    - file: notebooks/gedi_reconstruct_AGBD_L2A_metrics
+    - file: notebooks/gedi_icesat2_field_cloud.ipynb
+#
+  - caption: GEDI L4B Gridded AGBD
+    numbered: false
+    chapters:
+    - file: notebooks/gedi_l4b_ogc
+#
+  - caption: Python Scripts
+    numbered: false
+    chapters:
+    - file: scripts/README
+#
+  - caption: Others
+    numbered: false
+    chapters:
+    - file: docs/resources
+    - file: citation
+    - file: LICENSE
+    - file: CHANGELOG

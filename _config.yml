@@ -1,0 +1,43 @@
+# Book settings
+
+title: GEDI Science Data Tutorials
+author: ORNL DAAC
+logo: docs/gedilogo.png
+
+# Force re-execution of notebooks on each build.
+execute:
+  execute_notebooks: 'off' # force
+
+# Define the name of the latex output file for PDF builds
+latex:
+  latex_documents:
+    targetname: gedi_tutorials.tex
+
+# Add a bibtex file so that we can create citations
+bibtex_bibfiles:
+  - references.bib
+sphinx:
+  config:
+    language: en
+    bibtex_reference_style: author_year
+    # suppress mime type warnings for vnd.holoviews
+    suppress_warnings: ["mystnb.unknown_mime_type"]
+  extra_extensions:
+   - sphinxcontrib.mermaid
+    
+# lanch buttons
+launch_buttons:
+  notebook_interface        : jupyterlab
+  binderhub_url             : "https://mybinder.org"
+  jupyterhub_url            : "https://openscapes.2i2c.cloud/"
+  thebe                     : true
+  colab_url                 : "https://colab.research.google.com"
+
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/ornldaac/gedi_tutorials 
+  branch: main
+
+html:
+  use_issues_button: true
+  use_repository_button: true
