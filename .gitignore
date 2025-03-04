@@ -4,3 +4,8 @@
 _build
 # mac service store
 .DS_Store
+# files
+notebooks/subsets/*.h5*
+notebooks/subsets/*.csv*
+notebooks/subsets/*.geojson*
+notebooks/full_orbits/*.h5*
