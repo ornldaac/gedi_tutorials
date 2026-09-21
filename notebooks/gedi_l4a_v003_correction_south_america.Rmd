@@ -1,0 +1,274 @@
+---
+title: "Re-predict GEDI L4A AGBD from stored `xvar` using the revised R003 EBT_SA model"
+output:
+  html_document:
+    df_print: paged
+---
+
+This notebook applies the revised R003 'EBT_SA' biomass model to a Version 3 (V003) GEDI L4A granule for South American (SA) forest strata, without re-deriving the model's predictors (relative height, RH) from the Level L2A GEDI product.
+
+There are two prediction strata that use the 'EBT_SA' model: 'EBT_SA' and 'DBT_SA'. The code below finds this from the granule's own ANCILLARY/model_data (looking for model_name == 'EBT_SA') rather than hardcoding the pair.
+
+Each GEDI shot already stores its fully-built (offset-applied, transformed)
+predictor design matrix in the `xvar` dataset, and the model actually applied
+when the granule was produced is recorded per prediction stratum in
+`ANCILLARY/model_data`. There is no need to go back to the L2A product for re-deriving 
+the RH metrics and re-predicting AGBD with new model coefficients is just the following steps:
+
+1. Find all footprints where `predict_stratum` was `'EBT_SA'` or `'DBT_SA'`
+   when the granule was produced.
+2. Confirm the predictor definition (`rh_index`, `predictor_id`,
+   `x_transform`) for that stratum still matches the revised model —
+   this is what makes reusing `xvar` valid instead of a coincidence.
+3. Re-apply `agbd_t = [1, xvar] %*% par_new`, back-transform, and re-apply the
+   bias correction.
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## Prerequisites
+
+- **Granule file**: this notebook expects the L4A `.h5` granule in the same directory. Adjust 
+  the path if yours lives elsewhere.
+- **Package**: Requires the Bioconductor `rhdf5` package (`BiocManager::install('rhdf5')`).
+Unlike some HDF5 R bindings, `rhdf5` links its own bundled HDF5 build (via the
+`rhdf5lib` package) rather than whatever HDF5 happens to be installed on the
+system, so there's nothing else to configure.
+
+```{r libs}
+if (!requireNamespace("rhdf5", quietly = TRUE)) {
+  if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+  }
+  BiocManager::install("rhdf5")
+}
+
+library(rhdf5)
+
+NODATA <- -9999.0
+
+# A V003 L4A granule (Amazon basin overpass) with a large EBT_SA population
+GRANULE_FILE <- 'GEDI04_A_2022314110220_O22155_04_T02087_02_004_01_V003.h5'
+
+# The model_name (== fit_stratum bucket in the selection JSON) whose coefficients
+# were revised on 2026-07-22
+CHANGED_MODEL_NAME <- 'EBT_SA'
+
+# NEW_MODEL holds the revised coefficients from issgedi_l4a_r003_estimators_20260722.json
+# group 4 / EBT_SA / selection 3 (identical to selection 4, used by DBT_SA --
+# both prediction strata now share this exact fit)
+NEW_MODEL <- list(
+  rh_index = c(50L, 98L),
+  predictor_id = c(1L, 2L),
+  x_transform = 'sqrt',
+  y_transform = 'sqrt',
+  bias_correction_name = 'Snowdon',
+  bias_correction_value = 1.15323996418645,
+  par = c(-133.884363713764, 6.95698142185319, 6.28656682203761),
+  vcov = c(2.50305363959644, -0.111702554712149, -0.114315207874669,
+           -0.111702554712149, 0.0654051766999497, -0.0523471595323726,
+           -0.114315207874669, -0.0523471595323726, 0.0598715899876015),
+  rse = 3.53298787494478,
+  dof = 3485,
+  response_max_value = 1578.0,
+  predictor_max_value = c(12.2270192606375, 12.7730184373154)
+)
+```
+
+```{r functions}
+# The EBT_SA model is a square-root model with a Snowdon bias correction --
+# hardcoded rather than dispatched on NEW_MODEL$y_transform/bias_correction_name,
+# since this is the only model this notebook ever applies.
+back_transform <- function(agbd_t) {
+  agbd_t^2
+}
+
+apply_bias_correction <- function(agbd, value) {
+  agbd * value
+}
+
+# Per-stratum model actually used to produce this granule -- the model_name it
+# was routed to, plus its predictor definition (rh_index / predictor_id /
+# x_transform) -- read from ANCILLARY/model_data.
+#
+# compoundAsDataFrame = FALSE is required here: rhdf5's default (TRUE) can't
+# coerce a compound field of type ARRAY (rh_index, predictor_id, par, vcov, ...)
+# into a data.frame column and silently replaces those fields with NA. With
+# FALSE, every row is read in one call and array fields come back as proper
+# (field_length x n_rows) matrices -- no truncation, no row-by-row workaround.
+get_baked_in_models <- function(fid) {
+  md <- h5read(fid, "ANCILLARY/model_data", compoundAsDataFrame = FALSE)
+  models <- list()
+  for (i in seq_along(md$predict_stratum)) {
+    npar <- as.integer(md$npar[i])
+    models[[md$predict_stratum[i]]] <- list(
+      model_name = md$model_name[i],
+      rh_index = as.integer(md$rh_index[1:(npar - 1), i]),
+      predictor_id = as.integer(md$predictor_id[1:(npar - 1), i]),
+      x_transform = md$x_transform[i]
+    )
+  }
+  models
+}
+
+# Prediction strata routed through the revised model, restricted to those
+# whose predictor definition is unchanged from what's baked into the granule.
+get_compatible_strata <- function(baked_in_models) {
+  compatible <- character(0)
+  for (stratum in names(baked_in_models)) {
+    baked_in <- baked_in_models[[stratum]]
+    if (baked_in$model_name != CHANGED_MODEL_NAME) next
+    ok <- identical(baked_in$rh_index, as.integer(NEW_MODEL$rh_index)) &&
+      identical(baked_in$predictor_id, as.integer(NEW_MODEL$predictor_id)) &&
+      identical(baked_in$x_transform, NEW_MODEL$x_transform)
+    if (ok) {
+      compatible <- c(compatible, stratum)
+    } else {
+      cat(sprintf('  SKIPPED %s: predictor definition changed, xvar reuse invalid\n', stratum))
+    }
+  }
+  compatible
+}
+
+# Re-predict AGBD from a stored predictor matrix using the revised model.
+#
+# `xvar` is (npar_max - 1) x nshots: rhdf5, like other HDF5 R bindings,
+# reverses HDF5 dataset dimension order relative to h5py/numpy (HDF5 is
+# row-major, R is column-major), so a granule's (nshots, npar_max - 1)
+# dataset arrives here transposed.
+recompute_agbd_from_xvar <- function(xvar, predict_stratum, compatible_strata) {
+  agbd_new <- rep(NODATA, length(predict_stratum))
+  par <- NEW_MODEL$par
+  npar <- length(par)
+
+  for (stratum in compatible_strata) {
+    idx <- which(predict_stratum == stratum)
+    if (length(idx) == 0) next
+    xvar_s <- t(xvar[1:(npar - 1), idx, drop = FALSE])  # nidx x (npar - 1)
+    valid <- rowSums(xvar_s == NODATA) == 0
+    if (!any(valid)) next
+
+    predictors <- cbind(1, xvar_s[valid, , drop = FALSE])
+    agbd_t <- as.vector(predictors %*% par)
+    agbd <- back_transform(agbd_t)
+    agbd <- apply_bias_correction(agbd, NEW_MODEL$bias_correction_value)
+    agbd_new[idx[valid]] <- agbd
+  }
+
+  agbd_new
+}
+```
+
+## Read the granule and re-predict AGBD per beam
+
+Only `xvar`, `predict_stratum`, `agbd` (old estimate), `l4a_quality_flag_rel3`,
+`lat_lowestmode`/`lon_lowestmode`, and `ANCILLARY/model_data` are needed.
+
+```{r read-granule}
+fid <- H5Fopen(GRANULE_FILE)
+beams <- h5ls(fid, recursive = FALSE)$name
+beams <- beams[startsWith(beams, "BEAM")]
+baked_in_models <- get_baked_in_models(fid)
+
+cat(sprintf("Finding strata routed through the '%s' model:\n", CHANGED_MODEL_NAME))
+compatible_strata <- get_compatible_strata(baked_in_models)
+
+agbd_old_list <- list(); agbd_new_list <- list(); quality_list <- list(); stratum_list <- list()
+lon_list <- list(); lat_list <- list()
+
+for (beam in beams) {
+  xvar <- h5read(fid, paste0(beam, "/xvar"))
+  predict_stratum <- h5read(fid, paste0(beam, "/predict_stratum"))
+  agbd_old <- h5read(fid, paste0(beam, "/agbd"))
+  quality_flag <- h5read(fid, paste0(beam, "/l4a_quality_flag_rel3"))
+  lon <- h5read(fid, paste0(beam, "/lon_lowestmode"))
+  lat <- h5read(fid, paste0(beam, "/lat_lowestmode"))
+
+  agbd_new <- recompute_agbd_from_xvar(xvar, predict_stratum, compatible_strata)
+
+  agbd_old_list[[beam]] <- agbd_old
+  agbd_new_list[[beam]] <- agbd_new
+  quality_list[[beam]] <- quality_flag
+  stratum_list[[beam]] <- predict_stratum
+  lon_list[[beam]] <- lon
+  lat_list[[beam]] <- lat
+}
+H5Fclose(fid)
+
+agbd_old <- unlist(agbd_old_list, use.names = FALSE)
+agbd_new <- unlist(agbd_new_list, use.names = FALSE)
+quality_flag <- unlist(quality_list, use.names = FALSE)
+predict_stratum <- unlist(stratum_list, use.names = FALSE)
+lon <- unlist(lon_list, use.names = FALSE)
+lat <- unlist(lat_list, use.names = FALSE)
+
+valid_coord <- (lon > -180) & (lon < 180)
+cat(sprintf('Granule: %s\n', basename(GRANULE_FILE)))
+cat(sprintf('Bounding box: lon [%.2f, %.2f], lat [%.2f, %.2f]  (South America)\n',
+            min(lon[valid_coord]), max(lon[valid_coord]),
+            min(lat[valid_coord]), max(lat[valid_coord])))
+cat(sprintf('Total shots: %d\n', length(agbd_old)))
+cat(sprintf('Strata updated: %s\n', paste(sort(compatible_strata), collapse = ', ')))
+```
+
+## Effect of the revised estimators, by prediction stratum
+
+Restricted to `l4a_quality_flag_rel3 == 1` shots (highest-quality shots).
+
+```{r summary-table}
+quality <- (quality_flag == 1) & (agbd_old != NODATA) & (agbd_new != NODATA)
+cat(sprintf('Quality shots: %d / %d\n\n', sum(quality), length(agbd_old)))
+cat(sprintf('%-10s %8s %12s %12s %12s\n', 'stratum', 'n', 'mean_before', 'mean_after', 'mean_delta'))
+for (stratum in sort(unique(predict_stratum[quality]))) {
+  m <- quality & (predict_stratum == stratum)
+  delta <- agbd_new[m] - agbd_old[m]
+  cat(sprintf('%-10s %8d %12.2f %12.2f %12.3f\n',
+              stratum, sum(m), mean(agbd_old[m]), mean(agbd_new[m]), mean(delta)))
+}
+
+cat(sprintf('\nOverall mean AGBD before: %.2f Mg/ha\n', mean(agbd_old[quality])))
+cat(sprintf('Overall mean AGBD after:  %.2f Mg/ha\n', mean(agbd_new[quality])))
+```
+
+### Distribution of the per-shot change
+
+The histogram shows the per-shot AGBD change (`after - before`). The dashed line
+marks the mean. A distribution sitting mostly left of zero confirms the revision
+reduces biomass estimates across the quality-flagged shots, not just on average.
+
+```{r delta-histogram, fig.width=6.5, fig.height=4.5}
+COLOR_DELTA <- '#eb6834'  # categorical slot 2 (orange)
+
+before <- agbd_old[quality]
+after <- agbd_new[quality]
+delta <- after - before
+delta_mean <- mean(delta)
+delta_sd <- sd(delta)
+
+hist(delta, breaks = 60, col = COLOR_DELTA, border = 'white',
+     xlab = 'AGBD after - before (Mg/ha)', ylab = 'Shot count',
+     main = sprintf('EBT_SA + DBT_SA quality-flagged shot AGBD change (n=%d)', sum(quality)))
+abline(v = delta_mean, col = 'grey20', lwd = 1.5, lty = 2)
+legend('topright', bty = 'n',
+       legend = sprintf('mean = %.2f Mg/ha\ns.d. = %.2f Mg/ha', delta_mean, delta_sd))
+```
+### Where in the distribution is the change?
+
+The Q-Q plot compares the before/after AGBD distributions percentile-by-
+percentile against the 1:1 line. Points falling below the line mean the revised
+estimate is lower at that percentile; the growing gap toward the high end shows
+the reduction is largest for the highest-biomass shots.
+
+```{r ebt-sa-qq, fig.width=5.5, fig.height=5.5}
+percentiles <- 1:99 / 100
+before_q <- quantile(before, percentiles)
+after_q <- quantile(after, percentiles)
+lim <- max(before_q, after_q, 600)
+
+plot(before_q, after_q, pch = 21, col = COLOR_DELTA, bg = NA, lwd = 1.2, cex = 1.1,
+     xlim = c(0, lim), ylim = c(0, lim), asp = 1,
+     xlab = 'AGBD before, percentile (Mg/ha)', ylab = 'AGBD after, percentile (Mg/ha)',
+     main = sprintf('EBT_SA + DBT_SA quality-flagged shot Q-Q plot (n=%d)', sum(quality)))
+abline(0, 1, col = 'grey30', lwd = 1, lty = 2)
+legend('topleft', legend = '1:1', col = 'grey30', lwd = 1, lty = 2, bty = 'n')
+```
