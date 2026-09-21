@@ -1,0 +1,52 @@
+version: 1
+project:
+  title: GEDI Science Data Tutorials
+  github: ornldaac/gedi_tutorials
+  bibliography:
+    - references.bib
+  exports:
+    - format: pdf
+      template: plain_latex_book
+      output: exports/gedi_tutorials.pdf
+  toc:
+    - file: README.md
+    - title: Introduction
+      children:
+        - file: docs/datasets.md
+        - file: docs/services.md
+        - file: docs/prerequisites.md
+          children:
+            - file: docs/prerequisites/earthdatalogin.md
+            - file: docs/prerequisites/pythonmodules.md
+            - file: docs/prerequisites/compute.md
+            - file: docs/prerequisites/git.md
+    - title: GEDI L4A Footprint AGBD
+      children:
+        - file: notebooks/gedi_l4a_search_download.ipynb
+        - file: notebooks/gedi_l4a_subsets.ipynb
+        - file: notebooks/gedi_l4a_exploring_data.ipynb
+        - file: notebooks/gedi_l4a_direct_s3_access.ipynb
+        - file: notebooks/gedi_l4a_harmony.ipynb
+        - file: notebooks/gedi_l4a_access_hyrax.ipynb
+        - file: notebooks/gedi_l4a_v003_correction_south_america.ipynb
+        - file: notebooks/gedi_l4a_correct_V002_01.ipynb
+        - file: notebooks/gedi_reconstruct_AGBD_L2A_metrics.ipynb
+        - file: notebooks/gedi_icesat2_field_cloud.ipynb
+
+    - title: GEDI L4B Gridded AGBD
+      children:
+        - file: notebooks/gedi_l4b_ogc.ipynb
+    - title: Python Scripts
+      children:
+        - file: scripts/README.md
+    - title: Others
+      children:
+        - file: docs/resources.md
+        - file: citation.md
+        - file: LICENSE.md
+        - file: CHANGELOG.md
+site:
+  options:
+    logo: docs/gedilogo.png
+    folders: true
+  template: book-theme
