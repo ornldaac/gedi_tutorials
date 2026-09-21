@@ -47,6 +47,12 @@ project:
         - file: CHANGELOG.md
 site:
   options:
+    favicon: favicon.ico
     logo: docs/gedilogo.png
     folders: true
   template: book-theme
+  actions:
+    - title: GitHub
+      url: https://github.com/ornldaac/gedi_tutorials
+  parts:
+    primary_sidebar_footer: earthdata_footer.md
