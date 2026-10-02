@@ -8,9 +8,10 @@ Following is the list of GEDI mission data products archived at a NASA DAAC.
 | [GEDI L1B Geolocated Waveform](https://doi.org/10.5067/GEDI/GEDI01_B.003) | 3  | Footprint | HDF5 | 
 | [GEDI L2A Elevation and Height Metrics](https://doi.org/10.5067/GEDI/GEDI02_A.003)  |  3  | Footprint | HDF5 | 
 | [GEDI L2B Canopy Cover and Vertical Profile Metrics](https://doi.org/10.5067/GEDI/GEDI02_B.003)   |  3  | Footprint | HDF5 | 
-| [GEDI L3 Land Surface Metrics](https://doi.org/10.3334/ORNLDAAC/1952) | 2  | Gridded | COG | 
+| [GEDI L3 Land Surface Metrics](https://doi.org/10.3334/ORNLDAAC/1952) | 3  | Gridded | COG | 
 | [GEDI L4A Aboveground Biomass Density](https://doi.org/10.3334/ORNLDAAC/2508)  | 3  | Footprint | HDF5 | 
 | [GEDI L4B Aboveground Biomass Density](https://doi.org/10.3334/ORNLDAAC/2299)  | 2.1  | Gridded | COG | 
+| [GEDI L4B Country-level Summaries of Aboveground Biomass](https://doi.org/10.3334/ORNLDAAC/2321)  | 2.1  | Tabular | CSV | 
 | [GEDI L4C Waveform Structural Complexity Index](https://doi.org/10.3334/ORNLDAAC/2520)  | 3  | Footprint | HDF5 | 
 | [GEDI L4C Waveform Structural Complexity Index](https://doi.org/10.3334/ORNLDAAC/2470)  | 2  | Gridded | COG | 
 | [GEDI L4C Global Waveform Structural Complexity Index Fusion](https://doi.org/10.3334/ORNLDAAC/2474)  | 2  | Gridded | COG | 
