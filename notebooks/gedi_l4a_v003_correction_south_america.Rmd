@@ -152,6 +152,7 @@ recompute_agbd_from_xvar <- function(xvar, predict_stratum, compatible_strata) {
     agbd_t <- as.vector(predictors %*% par)
     agbd <- back_transform(agbd_t)
     agbd <- apply_bias_correction(agbd, NEW_MODEL$bias_correction_value)
+    agbd[agbd_t < 0] <- 0  # matches V003 production for sqrt-transformed models
     agbd_new[idx[valid]] <- agbd
   }
 
